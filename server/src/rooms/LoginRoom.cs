@@ -1,4 +1,5 @@
-﻿using shared;
+﻿using System.Collections.Generic;
+using shared;
 
 namespace server
 {
@@ -14,8 +15,11 @@ namespace server
 		//arbitrary max amount just to demo the concept
 		private const int MAX_MEMBERS = 50;
 
+		private Dictionary<string, TcpMessageChannel> _membersDic;
+		
 		public LoginRoom(TCPGameServer pOwner) : base(pOwner)
 		{
+			_membersDic = new Dictionary<string, TcpMessageChannel>();
 		}
 
 		protected override void addMember(TcpMessageChannel pMember)
@@ -48,9 +52,19 @@ namespace server
 		 */
 		private void handlePlayerJoinRequest (PlayerJoinRequest pMessage, TcpMessageChannel pSender)
 		{
+			PlayerJoinResponse playerJoinResponse;
+			var userName = pMessage.name?.Trim();
+			
+			if (string.IsNullOrWhiteSpace(userName))
+			{
+				playerJoinResponse = new PlayerJoinResponse();
+				playerJoinResponse.result = PlayerJoinResponse.RequestResult.ACCEPTED;
+				pSender.SendMessage(playerJoinResponse);
+			}
+			
 			Log.LogInfo("Moving new client to accepted...", this);
 
-			PlayerJoinResponse playerJoinResponse = new PlayerJoinResponse();
+			playerJoinResponse = new PlayerJoinResponse();
 			playerJoinResponse.result = PlayerJoinResponse.RequestResult.ACCEPTED;
 			pSender.SendMessage(playerJoinResponse);
 
