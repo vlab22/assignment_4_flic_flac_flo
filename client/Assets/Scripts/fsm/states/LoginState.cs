@@ -41,7 +41,7 @@ public class LoginState : ApplicationStateWithView<LoginView>
      */
     private void Connect()
     {
-        if (view.userName == "")
+        if (string.IsNullOrWhiteSpace(view.userName))
         {
             view.TextConnectResults = "Please enter a name first";
             return;
