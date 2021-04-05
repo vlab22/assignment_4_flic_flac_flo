@@ -152,7 +152,7 @@ namespace server
         public string GetUserNameByMember(TcpMessageChannel pMember)
         {
             //TODO: create a Dictionary<pMember, username>
-            var userName = _usersDic.Where(u => u.Value == pMember)
+            var userName = _usersDic.Where(userKv => userKv.Value == pMember)
                 .Select(kv => kv.Key)
                 .FirstOrDefault();
 
