@@ -27,9 +27,7 @@ namespace server
             roomJoinedEvent.room = RoomJoinedEvent.Room.LOBBY_ROOM;
             pMember.SendMessage(roomJoinedEvent);
 
-            var userName = _usersDic.Where(u => u.Value == pMember)
-                .Select(kv => kv.Key)
-                .FirstOrDefault();
+            var userName = GetUserNameByMember(pMember);
 
             if (string.IsNullOrWhiteSpace(userName))
             {
@@ -61,10 +59,27 @@ namespace server
 
         protected override void handleNetworkMessage(ASerializable pMessage, TcpMessageChannel pSender)
         {
-            if (pMessage is ChangeReadyStatusRequest statusRequest)
+            switch (pMessage)
             {
-                handleReadyNotification(statusRequest, pSender);
+                case ChangeReadyStatusRequest statusRequest:
+                    handleReadyNotification(statusRequest, pSender);
+                    break;
+                case ChatMessage chatMessage:
+                    handleChatMessageNotification(chatMessage, pSender);
+                    break;
             }
+        }
+
+        private void handleChatMessageNotification(ChatMessage pChatMessage, TcpMessageChannel pSender)
+        {
+            var userName = GetUserNameByMember(pSender);
+
+            if (string.IsNullOrWhiteSpace(userName))
+                return;
+
+            var userChatMessage = new ChatMessage();
+            userChatMessage.message = $"{userName}: {pChatMessage.message}";
+            sendToAll(userChatMessage);
         }
 
         private void handleReadyNotification(ChangeReadyStatusRequest pReadyNotification, TcpMessageChannel pSender)
@@ -86,6 +101,7 @@ namespace server
                 TcpMessageChannel player2 = _readyMembers[1];
                 removeMember(player1);
                 removeMember(player2);
+                
                 _server.GetGameRoom().StartGame(player1, player2);
             }
 
