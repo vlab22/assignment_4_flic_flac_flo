@@ -9,7 +9,7 @@ namespace server
     {
 		protected SimpleRoom(TCPGameServer pServer) : base(pServer) { }
 
-        public void AddMember (TcpMessageChannel pChannel, string userName)
+        public void AddMember (TcpMessageChannel pChannel)
         {
             addMember(pChannel);
         }
