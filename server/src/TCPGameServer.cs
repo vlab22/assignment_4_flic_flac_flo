@@ -67,6 +67,7 @@ namespace server {
 					//and wrap the client in an easier to use communication channel
 					TcpMessageChannel channel = new TcpMessageChannel(client);
 					//and add it to the login room for further 'processing'
+					
 					_loginRoom.AddMember(channel);
 				}
 

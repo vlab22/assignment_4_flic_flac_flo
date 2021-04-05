@@ -20,15 +20,17 @@ namespace server
 		protected override void addMember(TcpMessageChannel pMember)
 		{
 			base.addMember(pMember);
-
+			
 			//tell the member it has joined the lobby
 			RoomJoinedEvent roomJoinedEvent = new RoomJoinedEvent();
 			roomJoinedEvent.room = RoomJoinedEvent.Room.LOBBY_ROOM;
 			pMember.SendMessage(roomJoinedEvent);
 
 			//print some info in the lobby (can be made more applicable to the current member that joined)
-			ChatMessage simpleMessage = new ChatMessage();
-			simpleMessage.message = "Client 'John Doe' has joined the lobby!";
+			ChatMessage simpleMessage = new ChatMessage
+			{
+				message = $"Client 'userName' has joined the lobby!"
+			};
 			pMember.SendMessage(simpleMessage);
 
 			//send information to all clients that the lobby count has changed

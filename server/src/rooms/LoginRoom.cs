@@ -21,7 +21,7 @@ namespace server
 		protected override void addMember(TcpMessageChannel pMember)
 		{
 			base.addMember(pMember);
-
+			
 			//notify the client that (s)he is now in the login room, clients can wait for that before doing anything else
 			RoomJoinedEvent roomJoinedEvent = new RoomJoinedEvent();
 			roomJoinedEvent.room = RoomJoinedEvent.Room.LOGIN_ROOM;
@@ -55,7 +55,7 @@ namespace server
 			pSender.SendMessage(playerJoinResponse);
 
 			removeMember(pSender);
-			_server.GetLobbyRoom().AddMember(pSender);
+			_server.GetLobbyRoom().AddMember(pSender, pMessage.name);
 		}
 
 	}
