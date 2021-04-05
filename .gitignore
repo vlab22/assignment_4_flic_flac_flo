@@ -9,6 +9,9 @@ client/Assets/Images/
 
 client/Assets/shared/
 
-shared/
+
+/shared/bin/
+/shared/bin/obj/
+
 /server/.idea/
 /client/.idea/
