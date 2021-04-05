@@ -9,7 +9,7 @@ client/Assets/Images/
 
 client/Assets/shared/
 
-
+/shared/.vs/
 /shared/bin/
 /shared/bin/obj/
 
