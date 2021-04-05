@@ -21,6 +21,8 @@ namespace server
 		//all members of this room (we identify them by their message channel)
 		private List<TcpMessageChannel> _members;
 
+		protected Dictionary<string, TcpMessageChannel> _usersDic;
+		
 		/**
 		 * Create a room with an empty member list and reference to the server instance they are a part of.
 		 */
@@ -28,6 +30,7 @@ namespace server
 		{
 			_server = pServer;
 			_members = new List<TcpMessageChannel>();
+			_usersDic = new Dictionary<string, TcpMessageChannel>();
 		}
 
 		protected virtual void addMember(TcpMessageChannel pMember)
@@ -36,6 +39,12 @@ namespace server
 			_members.Add(pMember);
 		}
 
+		public virtual void addUser(string userName, TcpMessageChannel pMember)
+		{
+			if (!_usersDic.ContainsKey(userName))
+				_usersDic.Add(userName, pMember);
+		}
+		
 		protected virtual void removeMember(TcpMessageChannel pMember)
 		{
 			Log.LogInfo("Client left.", this);
