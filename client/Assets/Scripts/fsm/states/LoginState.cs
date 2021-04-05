@@ -1,6 +1,8 @@
 ﻿using shared;
 using System.Collections.Generic;
+using CustomUnityEvents;
 using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * Starting state where you can connect to the server.
@@ -93,13 +95,10 @@ public class LoginState : ApplicationStateWithView<LoginView>
 
     private void handlePlayerJoinResponse(PlayerJoinResponse pMessage)
     {
-        //Dont do anything with this info at the moment, just leave it to the RoomJoinedEvent
-        //We could handle duplicate name messages, get player info etc here
-        /*
-        if (pMessage.result == PlayerJoinResponse.State.ACCEPTED)
+        if (pMessage.result == PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE)
         {
+            view.TextConnectResults = $"Username already in use, try another";
         }
-        */
     }
 
     private void handleRoomJoinedEvent(RoomJoinedEvent pMessage)
