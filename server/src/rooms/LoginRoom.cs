@@ -55,7 +55,7 @@ namespace server
 			pSender.SendMessage(playerJoinResponse);
 
 			removeMember(pSender);
-			_server.GetLobbyRoom().AddMember(pSender, pMessage.name);
+			_server.GetLobbyRoom().AddMember(pSender);
 		}
 
 	}
