@@ -14,12 +14,9 @@ namespace server
 	{
 		//arbitrary max amount just to demo the concept
 		private const int MAX_MEMBERS = 50;
-
-		private Dictionary<string, TcpMessageChannel> _membersDic;
 		
 		public LoginRoom(TCPGameServer pOwner) : base(pOwner)
 		{
-			_membersDic = new Dictionary<string, TcpMessageChannel>();
 		}
 
 		protected override void addMember(TcpMessageChannel pMember)
@@ -60,14 +57,18 @@ namespace server
 				return;
 			}
 
-			if (_membersDic.ContainsKey(userName))
+			if (_usersDic.ContainsKey(userName))
 			{
 				playerJoinResponse = new PlayerJoinResponse
 				{
 					result = PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE
 				};
 				pSender.SendMessage(playerJoinResponse);
+				
+				return;
 			}
+
+			addUser(userName, pSender);
 			
 			Log.LogInfo("Moving new client to accepted...", this);
 
@@ -76,6 +77,8 @@ namespace server
 			pSender.SendMessage(playerJoinResponse);
 
 			removeMember(pSender);
+			
+			_server.GetLobbyRoom().addUser(userName, pSender);
 			_server.GetLobbyRoom().AddMember(pSender);
 		}
 
