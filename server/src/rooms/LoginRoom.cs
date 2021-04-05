@@ -58,8 +58,9 @@ namespace server
 			if (string.IsNullOrWhiteSpace(userName))
 			{
 				playerJoinResponse = new PlayerJoinResponse();
-				playerJoinResponse.result = PlayerJoinResponse.RequestResult.ACCEPTED;
+				playerJoinResponse.result = PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE;
 				pSender.SendMessage(playerJoinResponse);
+				return;
 			}
 			
 			Log.LogInfo("Moving new client to accepted...", this);
