@@ -7,10 +7,11 @@ using UnityEngine;
  */
 public class LoginState : ApplicationStateWithView<LoginView>
 {
-    [SerializeField]    private string _serverIP = null;
-    [SerializeField]    private int _serverPort = 0;
-    [Tooltip("To avoid long iteration times, set this to true while testing.")]
-    [SerializeField]    private bool autoConnectWithRandomName = false;
+    [SerializeField] private string _serverIP = null;
+    [SerializeField] private int _serverPort = 0;
+
+    [Tooltip("To avoid long iteration times, set this to true while testing.")] [SerializeField]
+    private bool autoConnectWithRandomName = false;
 
     public override void EnterState()
     {
@@ -22,13 +23,14 @@ public class LoginState : ApplicationStateWithView<LoginView>
         //If flagged, generate a random name and connect automatically
         if (autoConnectWithRandomName)
         {
-            List<string> names = new List<string> { "Pergu", "Korgulg", "Xaguk", "Rodagog", "Kodagog", "Dular", "Buggug", "Gruumsh" };
+            List<string> names = new List<string>
+                {"Pergu", "Korgulg", "Xaguk", "Rodagog", "Kodagog", "Dular", "Buggug", "Gruumsh"};
             view.userName = names[Random.Range(0, names.Count)];
             Connect();
         }
     }
 
-    public override void ExitState ()
+    public override void ExitState()
     {
         base.ExitState();
 
@@ -51,9 +53,10 @@ public class LoginState : ApplicationStateWithView<LoginView>
         if (fsm.channel.Connect(_serverIP, _serverPort))
         {
             tryToJoinLobby();
-        } else
+        }
+        else
         {
-            view.TextConnectResults = "Oops, couldn't connect:"+string.Join("\n", fsm.channel.GetErrors());
+            view.TextConnectResults = "Oops, couldn't connect:" + string.Join("\n", fsm.channel.GetErrors());
         }
     }
 
@@ -68,20 +71,25 @@ public class LoginState : ApplicationStateWithView<LoginView>
     /// //////////////////////////////////////////////////////////////////
     ///                     NETWORK MESSAGE PROCESSING
     /// //////////////////////////////////////////////////////////////////
-
     private void Update()
     {
         //if we are connected, start processing messages
         if (fsm.channel.Connected) receiveAndProcessNetworkMessages();
     }
 
-    
+
     protected override void handleNetworkMessage(ASerializable pMessage)
     {
-        if (pMessage is PlayerJoinResponse) handlePlayerJoinResponse (pMessage as PlayerJoinResponse);
-        else if (pMessage is RoomJoinedEvent) handleRoomJoinedEvent (pMessage as RoomJoinedEvent);
+        switch (pMessage)
+        {
+            case PlayerJoinResponse joinResponse:
+                handlePlayerJoinResponse(joinResponse);
+                break;
+            case RoomJoinedEvent roomJoinedEvent:
+                handleRoomJoinedEvent(roomJoinedEvent);
+                break;
+        }
     }
-    
 
     private void handlePlayerJoinResponse(PlayerJoinResponse pMessage)
     {
@@ -94,13 +102,11 @@ public class LoginState : ApplicationStateWithView<LoginView>
         */
     }
 
-    private void handleRoomJoinedEvent (RoomJoinedEvent pMessage)
+    private void handleRoomJoinedEvent(RoomJoinedEvent pMessage)
     {
         if (pMessage.room == RoomJoinedEvent.Room.LOBBY_ROOM)
         {
             fsm.ChangeState<LobbyState>();
-        } 
+        }
     }
-
 }
-
