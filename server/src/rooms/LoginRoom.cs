@@ -30,9 +30,9 @@ namespace server
 
 		protected override void handleNetworkMessage(ASerializable pMessage, TcpMessageChannel pSender)
 		{
-			if (pMessage is PlayerJoinRequest)
+			if (pMessage is PlayerJoinRequest joinRequest)
 			{
-				handlePlayerJoinRequest(pMessage as PlayerJoinRequest, pSender);
+				handlePlayerJoinRequest(joinRequest, pSender);
 			}
 			else //if member sends something else than a PlayerJoinRequest
 			{
