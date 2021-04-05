@@ -71,9 +71,18 @@ public class LobbyState : ApplicationStateWithView<LobbyView>
     
     protected override void handleNetworkMessage(ASerializable pMessage)
     {
-        if (pMessage is ChatMessage) handleChatMessage(pMessage as ChatMessage);
-        else if (pMessage is RoomJoinedEvent) handleRoomJoinedEvent(pMessage as RoomJoinedEvent);
-        else if (pMessage is LobbyInfoUpdate) handleLobbyInfoUpdate(pMessage as LobbyInfoUpdate);
+        switch (pMessage)
+        {
+            case ChatMessage chatMessage:
+                handleChatMessage(chatMessage);
+                break;
+            case RoomJoinedEvent roomJoinedEvent:
+                handleRoomJoinedEvent(roomJoinedEvent);
+                break;
+            case LobbyInfoUpdate lobbyInfoUpdate:
+                handleLobbyInfoUpdate(lobbyInfoUpdate);
+                break;
+        }
     }
 
     private void handleChatMessage(ChatMessage pMessage)
