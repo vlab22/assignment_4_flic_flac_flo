@@ -57,10 +57,16 @@ namespace server
 			
 			if (string.IsNullOrWhiteSpace(userName))
 			{
-				playerJoinResponse = new PlayerJoinResponse();
-				playerJoinResponse.result = PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE;
-				pSender.SendMessage(playerJoinResponse);
 				return;
+			}
+
+			if (_membersDic.ContainsKey(userName))
+			{
+				playerJoinResponse = new PlayerJoinResponse
+				{
+					result = PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE
+				};
+				pSender.SendMessage(playerJoinResponse);
 			}
 			
 			Log.LogInfo("Moving new client to accepted...", this);
