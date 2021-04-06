@@ -13,7 +13,9 @@ public class GameState : ApplicationStateWithView<GameView>
     private int player1MoveCount = 0;
     private int player2MoveCount = 0;
 
-    private string[] _userNames = new string[2];
+    private PlayerInfo[] _players = new PlayerInfo[2];
+
+    private PlayerInfo _thisPlayer;
     
     public override void EnterState()
     {
@@ -21,6 +23,9 @@ public class GameState : ApplicationStateWithView<GameView>
 
         var requestPlayerInfoMessage = new PlayersInfoRequest();
         fsm.channel.SendMessage(requestPlayerInfoMessage);
+
+        var whoAmIRequest = new WhoAmIRequest();
+        //TODO: parei aqui
         
         view.gameBoard.OnCellClicked += _onCellClicked;
     }
@@ -47,33 +52,35 @@ public class GameState : ApplicationStateWithView<GameView>
 
     protected override void handleNetworkMessage(ASerializable pMessage)
     {
-        if (pMessage is MakeMoveResult makeMoveResult)
+        switch (pMessage)
         {
-            handleMakeMoveResult(makeMoveResult);
+            case MakeMoveResult makeMoveResult:
+                handleMakeMoveResult(makeMoveResult);
+                break;
+            case PlayersInfoResponse playersInfoResponse:
+                handlePlayersInfoResponse(playersInfoResponse);
+                break;
+            case WinnerConditionResponse winnerResponse:
+                handleWinnerConditionResponse(winnerResponse);
+                break;
         }
-        else if (pMessage is PlayersInfoResponse playersInfoResponse)
-        {
-            handlePlayersInfoResponse(playersInfoResponse);
-        }
+    }
+
+    private void handleWinnerConditionResponse(WinnerConditionResponse winnerResponse)
+    {
+        var winnerUser = winnerResponse.winnerUser;
+        var winnerId = winnerResponse.winnerId;
+        var gameRoomId = winnerResponse.gameRoomId;
+        
+        
     }
 
     private void handlePlayersInfoResponse(PlayersInfoResponse playersInfoResponse)
     {
-        var playersInfos = playersInfoResponse.playersInfo;
-        
-        for (int i = 0; i < _userNames.Length; i++)
-        {
-            var playerInfo = playersInfos[i];
-            if (playerInfo == null || string.IsNullOrWhiteSpace(playerInfo.userName))
-            {
-                throw new Exception("PlayersInfoResponse with null playerInfo or empty username");
-            }
+        _players = playersInfoResponse.playersInfo;
 
-            _userNames[i] = playerInfo.userName;
-        }
-        
-        view.playerLabel1.text = $"P1 {_userNames[0]}";
-        view.playerLabel2.text = $"P1 {_userNames[1]}";
+        view.playerLabel1.text = $"P1 {_players[0].userName}";
+        view.playerLabel2.text = $"P1 {_players[1].userName}";
         
     }
 
@@ -85,12 +92,12 @@ public class GameState : ApplicationStateWithView<GameView>
         if (pMakeMoveResult.whoMadeTheMove == 1)
         {
             player1MoveCount++;
-            view.playerLabel1.text = $"P1 {_userNames[0]} (Movecount: {player1MoveCount})";
+            view.playerLabel1.text = $"P1 {_players[0].userName} (Movecount: {player1MoveCount})";
         }
         if (pMakeMoveResult.whoMadeTheMove == 2)
         {
             player2MoveCount++;
-            view.playerLabel2.text = $"P2 {_userNames[1]} (Movecount: {player2MoveCount})";
+            view.playerLabel2.text = $"P2 {_players[1].userName} (Movecount: {player2MoveCount})";
         }
     }
 }
