@@ -110,6 +110,12 @@ namespace server
 		 */
         protected void removeAndCloseMember(TcpMessageChannel pMember)
         {
+            var userName = GetUserNameByMember(pMember);
+            if (_usersDic.ContainsKey(userName))
+            {
+                _usersDic.Remove(userName);
+            }
+            
             removeMember(pMember);
             _server.RemovePlayerInfo(pMember);
             pMember.Close();
@@ -152,11 +158,9 @@ namespace server
         public string GetUserNameByMember(TcpMessageChannel pMember)
         {
             //TODO: create a Dictionary<pMember, username>
-            var userName = _usersDic.Where(userKv => userKv.Value == pMember)
-                .Select(kv => kv.Key)
-                .FirstOrDefault();
+            var keyValue = _usersDic.FirstOrDefault(kv => kv.Value == pMember);
 
-            return userName;
+            return keyValue.Key;
         }
     }
 }
