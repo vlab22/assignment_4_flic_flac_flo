@@ -101,7 +101,12 @@ namespace server
                 TcpMessageChannel player2 = _readyMembers[1];
                 removeMember(player1);
                 removeMember(player2);
-                
+
+                var user1 = GetUserNameByMember(player1);
+                var user2 = GetUserNameByMember(player2);
+                _server.GetGameRoom().addUser(user1, player1);
+                _server.GetGameRoom().addUser(user2, player2);
+
                 _server.GetGameRoom().StartGame(player1, player2);
             }
 
