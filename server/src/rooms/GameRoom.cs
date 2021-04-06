@@ -93,6 +93,24 @@ namespace server
 			//make the requested move (0-8) on the board for the player
 			_board.MakeMove(pMessage.move, playerID);
 
+			//Check Win Condition
+			var boardData = _board.GetBoardData();
+			int winnerId = boardData.WhoHasWon();
+			if (winnerId > 0)
+			{
+				var gameRoomId = _server.GameRooms.IndexOf(this);
+				var winnerResponse = new WinnerConditionResponse()
+				{
+					winnerId = winnerId,
+					winnerUser = _server.GetPlayerInfo(p => p.id == winnerId).FirstOrDefault()?.userName,
+					gameRoomId = gameRoomId
+				};
+				
+				sendToAll(winnerResponse);
+				
+				return;
+			}
+			
 			//and send the result of the boardstate back to all clients
 			MakeMoveResult makeMoveResult = new MakeMoveResult();
 			makeMoveResult.whoMadeTheMove = playerID;
