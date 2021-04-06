@@ -139,5 +139,10 @@ namespace server
                 member.SendMessage(pMessage);
             }
         }
+
+        public IEnumerable<PlayerInfo> GetPlayersInfos()
+        {
+            return _members.Select(m => _server.GetPlayerInfo(m));
+        }
     }
 }

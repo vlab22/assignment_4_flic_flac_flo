@@ -1,5 +1,6 @@
 ﻿using shared;
 using System;
+using System.Linq;
 
 namespace server
 {
@@ -57,10 +58,31 @@ namespace server
 
 		protected override void handleNetworkMessage(ASerializable pMessage, TcpMessageChannel pSender)
 		{
-			if (pMessage is MakeMoveRequest)
+			switch (pMessage)
 			{
-				handleMakeMoveRequest(pMessage as MakeMoveRequest, pSender);
+				case MakeMoveRequest makeMoveRequest:
+					handleMakeMoveRequest(makeMoveRequest, pSender);
+					break;
+				case PlayersInfoRequest playersInfoRequest:
+					handlePlayersInfoRequest(pSender);
+					break;
 			}
+		}
+
+		private void handlePlayersInfoRequest(TcpMessageChannel pSender)
+		{
+			var playersInfo = GetPlayersInfos();
+
+			var playerInfoResponse = new PlayersInfoResponse();
+			
+			int i = 0;
+			foreach (var info in playersInfo)
+			{
+				playerInfoResponse.playersInfo[i] = info;
+				i++;
+			}
+
+			pSender.SendMessage(playerInfoResponse);
 		}
 
 		private void handleMakeMoveRequest(MakeMoveRequest pMessage, TcpMessageChannel pSender)
