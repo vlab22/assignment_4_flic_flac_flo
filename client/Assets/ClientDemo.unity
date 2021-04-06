@@ -2526,7 +2526,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1344691635}
   m_HandleRect: {fileID: 1344691634}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2602,7 +2602,7 @@ MonoBehaviour:
   _view: {fileID: 1706710309}
   _serverIP: 127.0.0.1
   _serverPort: 55555
-  autoConnectWithRandomName: 0
+  autoConnectWithRandomName: 1
 --- !u!4 &1334490947
 Transform:
   m_ObjectHideFlags: 0
