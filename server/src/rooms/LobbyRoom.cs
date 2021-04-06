@@ -27,13 +27,8 @@ namespace server
             roomJoinedEvent.room = RoomJoinedEvent.Room.LOBBY_ROOM;
             pMember.SendMessage(roomJoinedEvent);
 
-            var userName = GetUserNameByMember(pMember);
-
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                addUser(userName, pMember);
-            }
-
+            var userName = _server.GetPlayerInfo(pMember).userName;
+            
             //print some info in the lobby (can be made more applicable to the current member that joined)
             ChatMessage simpleMessage = new ChatMessage
             {
@@ -72,7 +67,7 @@ namespace server
 
         private void handleChatMessageNotification(ChatMessage pChatMessage, TcpMessageChannel pSender)
         {
-            var userName = GetUserNameByMember(pSender);
+            var userName = _server.GetPlayerInfo(pSender).userName;
 
             if (string.IsNullOrWhiteSpace(userName))
                 return;
@@ -101,11 +96,6 @@ namespace server
                 TcpMessageChannel player2 = _readyMembers[1];
                 removeMember(player1);
                 removeMember(player2);
-
-                var user1 = GetUserNameByMember(player1);
-                var user2 = GetUserNameByMember(player2);
-                _server.GetGameRoom().addUser(user1, player1);
-                _server.GetGameRoom().addUser(user2, player2);
 
                 _server.GetGameRoom().StartGame(player1, player2);
             }

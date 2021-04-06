@@ -57,19 +57,6 @@ namespace server
 				return;
 			}
 
-			if (_usersDic.ContainsKey(userName))
-			{
-				playerJoinResponse = new PlayerJoinResponse
-				{
-					result = PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE
-				};
-				pSender.SendMessage(playerJoinResponse);
-				
-				return;
-			}
-
-			addUser(userName, pSender);
-			
 			Log.LogInfo("Moving new client to accepted...", this);
 
 			playerJoinResponse = new PlayerJoinResponse();
@@ -78,7 +65,6 @@ namespace server
 
 			removeMember(pSender);
 			
-			_server.GetLobbyRoom().addUser(userName, pSender);
 			_server.GetLobbyRoom().AddMember(pSender);
 		}
 

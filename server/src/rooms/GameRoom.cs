@@ -73,7 +73,6 @@ namespace server
 			//and send the result of the boardstate back to all clients
 			MakeMoveResult makeMoveResult = new MakeMoveResult();
 			makeMoveResult.whoMadeTheMove = playerID;
-			makeMoveResult.userName = GetUserNameByMember(pSender);
 			makeMoveResult.boardData = _board.GetBoardData();
 			sendToAll(makeMoveResult);
 		}
