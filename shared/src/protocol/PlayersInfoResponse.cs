@@ -4,7 +4,7 @@ namespace shared
 {
     public class PlayersInfoResponse : ASerializable
     {
-        public PlayerInfo[] playersInfo = new PlayerInfo[50];
+        public PlayerInfo[] playersInfo = new PlayerInfo[2];
         
         public override void Serialize(Packet pPacket)
         {
