@@ -57,6 +57,9 @@ namespace server
 				return;
 			}
 
+			var playerInfo = _server.GetPlayerInfo(pSender);
+			playerInfo.userName = userName;
+
 			Log.LogInfo("Moving new client to accepted...", this);
 
 			playerJoinResponse = new PlayerJoinResponse();
