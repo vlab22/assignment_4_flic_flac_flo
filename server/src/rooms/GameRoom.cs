@@ -78,6 +78,7 @@ namespace server
 			int i = 0;
 			foreach (var info in playersInfo)
 			{
+				info.id = i + 1;
 				playerInfoResponse.playersInfo[i] = info;
 				i++;
 			}
