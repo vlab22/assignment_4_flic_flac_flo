@@ -33,7 +33,7 @@ namespace server {
 
 		private LoginRoom _loginRoom;	//this is the room every new user joins
 		private LobbyRoom _lobbyRoom;	//this is the room a user moves to after a successful 'login'
-		private GameRoom _gameRoom;		//this is the room a user moves to when a game is succesfully started
+		private List<GameRoom> _gameRooms;		//this is the room a user moves to when a game is succesfully started
 
 		//stores additional info for a player
 		private Dictionary<TcpMessageChannel, PlayerInfo> _playerInfo = new Dictionary<TcpMessageChannel, PlayerInfo>();
@@ -43,7 +43,7 @@ namespace server {
 			//we have only one instance of each room, this is especially limiting for the game room (since this means you can only have one game at a time).
 			_loginRoom = new LoginRoom(this);
 			_lobbyRoom = new LobbyRoom(this);
-			_gameRoom = new GameRoom(this);
+			_gameRooms = new List<GameRoom>();
 		}
 
 		private void run()
@@ -74,8 +74,12 @@ namespace server {
 				//now update every single room
 				_loginRoom.Update();
 				_lobbyRoom.Update();
-				_gameRoom.Update();
 
+				foreach (var gameRoom in _gameRooms)
+				{
+					gameRoom.Update();
+				}
+				
 				Thread.Sleep(100);
 			}
 
@@ -84,7 +88,11 @@ namespace server {
 		//provide access to the different rooms on the server 
 		public LoginRoom GetLoginRoom() { return _loginRoom; }
 		public LobbyRoom GetLobbyRoom() { return _lobbyRoom; }
-		public GameRoom GetGameRoom() { return _gameRoom; }
+
+		public GameRoom GetGameRoom(int index)
+		{
+			return index > -1 && index < _gameRooms.Count ? _gameRooms[index] : null;
+		}
 
 		/**
 		 * Returns a handle to the player info for the given client 
@@ -118,6 +126,12 @@ namespace server {
 			_playerInfo.Remove(pClient);
 		}
 
+		public GameRoom CreateAGameRoom()
+		{
+			var gameRoom = new GameRoom(this);
+			_gameRooms.Add(gameRoom);
+			return gameRoom;
+		}
 	}
 
 }

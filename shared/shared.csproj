@@ -68,6 +68,8 @@
     <Compile Include="src\protocol\Lobby\LobbyInfoUpdate.cs" />
     <Compile Include="src\protocol\Login\PlayerJoinResponse.cs" />
     <Compile Include="src\protocol\Lobby\ChatMessage.cs" />
+    <Compile Include="src\protocol\PlayersInfoRequest.cs" />
+    <Compile Include="src\protocol\PlayersInfoResponse.cs" />
     <Compile Include="src\protocol\RoomJoinedEvent.cs" />
     <Compile Include="src\serialization\ASerializable.cs" />
     <Compile Include="src\serialization\Packet.cs" />

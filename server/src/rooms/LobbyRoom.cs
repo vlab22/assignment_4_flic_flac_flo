@@ -90,20 +90,27 @@ namespace server
             }
 
             //do we have enough people for a game and is there no game running yet?
-            if (_readyMembers.Count >= 2 && !_server.GetGameRoom().IsGameInPlay)
+            if (_readyMembers.Count >= 2)
             {
                 TcpMessageChannel player1 = _readyMembers[0];
                 TcpMessageChannel player2 = _readyMembers[1];
                 removeMember(player1);
                 removeMember(player2);
 
-                _server.GetGameRoom().StartGame(player1, player2);
+                CreateAndStartAGameRoom(player1, player2);
             }
 
             //(un)ready-ing / starting a game changes the lobby/ready count so send out an update
             //to all clients still in the lobby
             sendLobbyUpdateCount();
         }
+
+        private void CreateAndStartAGameRoom(TcpMessageChannel player1, TcpMessageChannel player2)
+        {
+            var gameRoom = _server.CreateAGameRoom();
+            gameRoom.StartGame(player1, player2);
+        }
+
 
         private void sendLobbyUpdateCount()
         {
