@@ -39,9 +39,9 @@ public class GameState : ApplicationStateWithView<GameView>
 
     protected override void handleNetworkMessage(ASerializable pMessage)
     {
-        if (pMessage is MakeMoveResult)
+        if (pMessage is MakeMoveResult makeMoveResult)
         {
-            handleMakeMoveResult(pMessage as MakeMoveResult);
+            handleMakeMoveResult(makeMoveResult);
         }
     }
 
