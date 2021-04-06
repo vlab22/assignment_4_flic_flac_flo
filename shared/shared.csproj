@@ -72,6 +72,8 @@
     <Compile Include="src\protocol\PlayersInfoRequest.cs" />
     <Compile Include="src\protocol\PlayersInfoResponse.cs" />
     <Compile Include="src\protocol\RoomJoinedEvent.cs" />
+    <Compile Include="src\protocol\WhoAmIRequest.cs" />
+    <Compile Include="src\protocol\WhoAmIResponse.cs" />
     <Compile Include="src\serialization\ASerializable.cs" />
     <Compile Include="src\serialization\Packet.cs" />
     <Compile Include="src\serialization\StreamUtil.cs" />
