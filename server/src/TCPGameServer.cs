@@ -4,6 +4,7 @@ using System.Net;
 using shared;
 using System.Threading;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace server {
@@ -132,6 +133,8 @@ namespace server {
 			_gameRooms.Add(gameRoom);
 			return gameRoom;
 		}
+
+		public ReadOnlyCollection<GameRoom> GameRooms => _gameRooms.AsReadOnly();
 	}
 
 }
