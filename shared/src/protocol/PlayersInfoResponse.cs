@@ -5,7 +5,7 @@ namespace shared
     public class PlayersInfoResponse : ASerializable
     {
         public PlayerInfo[] playersInfo = new PlayerInfo[2];
-        
+
         public override void Serialize(Packet pPacket)
         {
             foreach (var playerInfo in playersInfo)
