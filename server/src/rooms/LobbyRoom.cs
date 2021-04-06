@@ -34,7 +34,8 @@ namespace server
             {
                 message = $"Client '{userName}' has joined the lobby!"
             };
-            pMember.SendMessage(simpleMessage);
+            
+            sendToAll(simpleMessage);
 
             //send information to all clients that the lobby count has changed
             sendLobbyUpdateCount();
