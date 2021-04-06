@@ -27,7 +27,8 @@ namespace server
             roomJoinedEvent.room = RoomJoinedEvent.Room.LOBBY_ROOM;
             pMember.SendMessage(roomJoinedEvent);
 
-            var userName = _server.GetPlayerInfo(pMember).userName;
+            var playerInfo = _server.GetPlayerInfo(pMember);
+            var userName = playerInfo?.userName;
             
             //print some info in the lobby (can be made more applicable to the current member that joined)
             ChatMessage simpleMessage = new ChatMessage
