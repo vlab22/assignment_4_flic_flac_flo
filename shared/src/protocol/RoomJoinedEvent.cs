@@ -7,18 +7,15 @@
 	{
 		public enum Room { LOGIN_ROOM, LOBBY_ROOM, GAME_ROOM };
 		public Room room;
-		public string userName;
 
 		public override void Serialize(Packet pPacket)
 		{
 			pPacket.Write((int)room);
-			pPacket.Write(userName);
 		}
 
 		public override void Deserialize(Packet pPacket)
 		{
 			room = (Room)pPacket.ReadInt();
-			userName = pPacket.ReadString();
 		}
 	}
 }
