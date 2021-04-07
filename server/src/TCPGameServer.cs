@@ -131,9 +131,19 @@ namespace server {
 		{
 			var gameRoom = new GameRoom(this);
 			_gameRooms.Add(gameRoom);
+			
+			Log.LogInfo($"GameRoom {_gameRooms.Count} created", this);
+			
 			return gameRoom;
 		}
 
+		public void DestroyGameRoom(GameRoom pGameRoom)
+		{
+			int gameRoomId = _gameRooms.IndexOf(pGameRoom) + 1;
+			_gameRooms.Remove(pGameRoom);
+			
+			Log.LogInfo($"GameRoom {gameRoomId} destroyed", this);
+		}
 		public ReadOnlyCollection<GameRoom> GameRooms => _gameRooms.AsReadOnly();
 	}
 

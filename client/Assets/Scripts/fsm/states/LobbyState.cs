@@ -14,7 +14,7 @@ public class LobbyState : ApplicationStateWithView<LobbyView>
         base.EnterState();
 
         view.SetLobbyHeading("Welcome to the Lobby...");
-        view.ClearOutput();
+        //view.ClearOutput();
         view.AddOutput($"Server settings:"+fsm.channel.GetRemoteEndPoint());
         view.SetReadyToggle(autoQueueForGame);
 

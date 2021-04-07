@@ -133,7 +133,7 @@ namespace server
         /**
 		 * Sends a message to all members in the room.
 		 */
-        protected void sendToAll(ASerializable pMessage)
+        public void sendToAll(ASerializable pMessage)
         {
             foreach (TcpMessageChannel member in _members)
             {

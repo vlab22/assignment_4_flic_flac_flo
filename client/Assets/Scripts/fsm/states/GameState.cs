@@ -16,20 +16,25 @@ public class GameState : ApplicationStateWithView<GameView>
     private PlayerInfo[] _players = new PlayerInfo[2];
 
     private PlayerInfo _thisPlayer;
-    
+
     public override void EnterState()
     {
         base.EnterState();
 
         view.resultLabel.text = "";
-        
+
         var requestPlayerInfoMessage = new PlayersInfoRequest();
         fsm.channel.SendMessage(requestPlayerInfoMessage);
 
-        var whoAmIRequest = new WhoAmIRequest(); 
+        var whoAmIRequest = new WhoAmIRequest();
         fsm.channel.SendMessage(whoAmIRequest);
 
         view.gameBoard.OnCellClicked += _onCellClicked;
+
+        view.gameBoard.SetBoardData(new TicTacToeBoardData()
+        {
+            board = new[] {0, 0, 0, 0, 0, 0, 0, 0, 0}
+        });
     }
 
     private void _onCellClicked(int pCellIndex)
@@ -45,7 +50,7 @@ public class GameState : ApplicationStateWithView<GameView>
         base.ExitState();
         view.gameBoard.OnCellClicked -= _onCellClicked;
     }
-    
+
 
     private void Update()
     {
@@ -72,6 +77,13 @@ public class GameState : ApplicationStateWithView<GameView>
                     userName = whoAmIResponse.userName,
                 };
                 break;
+            case RoomJoinedEvent roomJoinedEvent:
+                if (roomJoinedEvent.room == RoomJoinedEvent.Room.LOBBY_ROOM)
+                {
+                    fsm.ChangeState<LobbyState>();
+                }
+
+                break;
         }
     }
 
@@ -96,7 +108,6 @@ public class GameState : ApplicationStateWithView<GameView>
 
         view.playerLabel1.text = $"P1 {_players[0].userName}";
         view.playerLabel2.text = $"P1 {_players[1].userName}";
-        
     }
 
     private void handleMakeMoveResult(MakeMoveResult pMakeMoveResult)
@@ -109,6 +120,7 @@ public class GameState : ApplicationStateWithView<GameView>
             player1MoveCount++;
             view.playerLabel1.text = $"P1 {_players[0].userName} (Movecount: {player1MoveCount})";
         }
+
         if (pMakeMoveResult.whoMadeTheMove == 2)
         {
             player2MoveCount++;

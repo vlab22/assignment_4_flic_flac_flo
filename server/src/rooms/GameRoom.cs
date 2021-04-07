@@ -27,7 +27,7 @@ namespace server
 		{
 		}
 
-		public void StartGame (TcpMessageChannel pPlayer1, TcpMessageChannel pPlayer2)
+		public void StartGame(TcpMessageChannel pPlayer1, TcpMessageChannel pPlayer2)
 		{
 			if (IsGameInPlay) throw new Exception("Programmer error duuuude.");
 
@@ -85,7 +85,7 @@ namespace server
 			var playersInfo = GetPlayersInfos();
 
 			var playerInfoResponse = new PlayersInfoResponse();
-			
+
 			int i = 0;
 			foreach (var info in playersInfo)
 			{
@@ -101,46 +101,74 @@ namespace server
 		{
 			if (matchEnds)
 				return;
-			
+
 			//we have two players, so index of sender is 0 or 1, which means playerID becomes 1 or 2
 			int playerID = indexOfMember(pSender) + 1;
 			//make the requested move (0-8) on the board for the player
 			_board.MakeMove(pMessage.move, playerID);
 
+			ProcessWinCondition();
+
+			//and send the result of the boardstate back to all clients
+			MakeMoveResult makeMoveResult = new MakeMoveResult();
+			makeMoveResult.whoMadeTheMove = playerID;
+			makeMoveResult.boardData = _board.GetBoardData();
+			sendToAll(makeMoveResult);
+		}
+
+		private void ProcessWinCondition()
+		{
 			//Check Win Condition
 			var boardData = _board.GetBoardData();
 			int winnerId = boardData.WhoHasWon();
 			if (winnerId > 0)
 			{
 				var gameRoomId = _server.GameRooms.IndexOf(this);
+				var winnerUser = _server.GetPlayerInfo(p => p.id == winnerId).FirstOrDefault()?.userName;
 				var winnerResponse = new WinnerConditionResponse()
 				{
 					winnerId = winnerId,
-					winnerUser = _server.GetPlayerInfo(p => p.id == winnerId).FirstOrDefault()?.userName,
+					winnerUser = winnerUser,
 					gameRoomId = gameRoomId
 				};
-				
+
 				sendToAll(winnerResponse);
 
 				matchEnds = true;
 
 				var thread = new Thread(delegate(object pO)
 				{
-					Log.LogInfo("Waiting 2 seconds", this);
+					Log.LogInfo("Waiting 2 secs", this);
 
 					Thread.Sleep(2000);
+
+					Log.LogInfo("Waited 2 secs", this);
+
+					SendPlayersToLobby();
+
+					var looserUser = GetPlayersInfos().FirstOrDefault(p => p.userName != winnerUser);
+					var message = $"===> {winnerUser} won {looserUser} in GameRoom {gameRoomId}";
 					
-					Log.LogInfo("2 seconds waited", this);
+					var chatMsg = new ChatMessage()
+					{
+						message = message
+					};
+					_server.GetLobbyRoom().sendToAll(chatMsg);
+					
 				});
-				
+
 				thread.Start();
 			}
-			
-			//and send the result of the boardstate back to all clients
-			MakeMoveResult makeMoveResult = new MakeMoveResult();
-			makeMoveResult.whoMadeTheMove = playerID;
-			makeMoveResult.boardData = _board.GetBoardData();
-			sendToAll(makeMoveResult);
+		}
+
+		private void SendPlayersToLobby()
+		{
+			for (int i = memberCount - 1; i >= 0; i--)
+			{
+				var member = Members[i];
+				removeMember(Members[i]);
+				_server.GetLobbyRoom().AddMember(member);
+			}
 		}
 
 	}
