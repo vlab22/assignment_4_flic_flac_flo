@@ -21,12 +21,14 @@ public class GameState : ApplicationStateWithView<GameView>
     {
         base.EnterState();
 
+        view.resultLabel.text = "";
+        
         var requestPlayerInfoMessage = new PlayersInfoRequest();
         fsm.channel.SendMessage(requestPlayerInfoMessage);
 
-        var whoAmIRequest = new WhoAmIRequest();
-        //TODO: parei aqui
-        
+        var whoAmIRequest = new WhoAmIRequest(); 
+        fsm.channel.SendMessage(whoAmIRequest);
+
         view.gameBoard.OnCellClicked += _onCellClicked;
     }
 
@@ -63,6 +65,13 @@ public class GameState : ApplicationStateWithView<GameView>
             case WinnerConditionResponse winnerResponse:
                 handleWinnerConditionResponse(winnerResponse);
                 break;
+            case WhoAmIResponse whoAmIResponse:
+                _thisPlayer = new PlayerInfo()
+                {
+                    id = whoAmIResponse.idInRoom,
+                    userName = whoAmIResponse.userName,
+                };
+                break;
         }
     }
 
@@ -71,8 +80,14 @@ public class GameState : ApplicationStateWithView<GameView>
         var winnerUser = winnerResponse.winnerUser;
         var winnerId = winnerResponse.winnerId;
         var gameRoomId = winnerResponse.gameRoomId;
-        
-        
+
+        var resultMsg = "You lose!";
+        if (winnerId == _thisPlayer.id)
+        {
+            resultMsg = "You Won!";
+        }
+
+        view.resultLabel.text = resultMsg;
     }
 
     private void handlePlayersInfoResponse(PlayersInfoResponse playersInfoResponse)

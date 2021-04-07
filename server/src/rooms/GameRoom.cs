@@ -1,6 +1,7 @@
 ﻿using shared;
 using System;
 using System.Linq;
+using System.Threading;
 
 namespace server
 {
@@ -16,6 +17,8 @@ namespace server
 	class GameRoom : Room
 	{
 		public bool IsGameInPlay { get; private set; }
+
+		public bool matchEnds;
 
 		//wraps the board to play on...
 		private TicTacToeBoard _board = new TicTacToeBoard();
@@ -66,6 +69,14 @@ namespace server
 				case PlayersInfoRequest playersInfoRequest:
 					handlePlayersInfoRequest(pSender);
 					break;
+				case WhoAmIRequest whoAmIRequest:
+					var whoAmIResponse = new WhoAmIResponse()
+					{
+						idInRoom = Members.IndexOf(pSender) + 1,
+						userName = _server.GetPlayerInfo(pSender).userName
+					};
+					pSender.SendMessage(whoAmIResponse);
+					break;
 			}
 		}
 
@@ -88,6 +99,9 @@ namespace server
 
 		private void handleMakeMoveRequest(MakeMoveRequest pMessage, TcpMessageChannel pSender)
 		{
+			if (matchEnds)
+				return;
+			
 			//we have two players, so index of sender is 0 or 1, which means playerID becomes 1 or 2
 			int playerID = indexOfMember(pSender) + 1;
 			//make the requested move (0-8) on the board for the player
@@ -107,8 +121,19 @@ namespace server
 				};
 				
 				sendToAll(winnerResponse);
+
+				matchEnds = true;
+
+				var thread = new Thread(delegate(object pO)
+				{
+					Log.LogInfo("Waiting 2 seconds", this);
+
+					Thread.Sleep(2000);
+					
+					Log.LogInfo("2 seconds waited", this);
+				});
 				
-				return;
+				thread.Start();
 			}
 			
 			//and send the result of the boardstate back to all clients
