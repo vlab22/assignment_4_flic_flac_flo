@@ -132,7 +132,7 @@ namespace server
 					gameRoomId = gameRoomId
 				};
 
-				sendToAll(winnerResponse);
+				Members.ForEach(pChannel => pChannel.SendMessage(winnerResponse));
 
 				matchEnds = true;
 
@@ -143,12 +143,12 @@ namespace server
 					Thread.Sleep(2000);
 
 					Log.LogInfo("Waited 2 secs", this);
-
-					SendPlayersToLobby();
-
+					
 					var looserUser = GetPlayersInfos().FirstOrDefault(p => p.userName != winnerUser);
 					var message = $"===> {winnerUser} won {looserUser} in GameRoom {gameRoomId}";
 					
+					SendPlayersToLobby();
+
 					var chatMsg = new ChatMessage()
 					{
 						message = message
