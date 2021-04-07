@@ -1,6 +1,7 @@
 ﻿using shared;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace server
@@ -144,5 +145,7 @@ namespace server
         {
             return _members.Select(m => _server.GetPlayerInfo(m));
         }
+
+        public List<TcpMessageChannel> Members => _members;
     }
 }
