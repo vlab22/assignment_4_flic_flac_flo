@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * Wraps all elements and functionality required for the GameView.
@@ -12,5 +13,8 @@ public class GameView : View
     public TMP_Text playerLabel1 => _player1Label;
     [SerializeField] private TMP_Text _player2Label = null;
     public TMP_Text playerLabel2 => _player2Label;
+    
+    [SerializeField] private Text _resultLabel = null;
+    public Text resultLabel => _resultLabel;
 }
 
