@@ -23,7 +23,7 @@ namespace server
 
         //all members of this room (we identify them by their message channel)
         private List<TcpMessageChannel> _members;
-        
+
         /**
 		 * Create a room with an empty member list and reference to the server instance they are a part of.
 		 */
@@ -124,11 +124,12 @@ namespace server
         {
             while (pMember.HasMessage())
             {
-                handleNetworkMessage(pMember.ReceiveMessage(), pMember);
+                var msg = pMember.ReceiveMessage();
+                handleNetworkMessage(msg, pMember);
             }
         }
 
-        abstract protected void handleNetworkMessage(ASerializable pMessage, TcpMessageChannel pSender);
+        protected abstract void handleNetworkMessage(ASerializable pMessage, TcpMessageChannel pSender);
 
         /**
 		 * Sends a message to all members in the room.
