@@ -127,4 +127,9 @@ public class GameState : ApplicationStateWithView<GameView>
             view.playerLabel2.text = $"P2 {_players[1].userName} (Movecount: {player2MoveCount})";
         }
     }
+
+    public void RequestToLeave()
+    {
+        fsm.channel.SendMessage(new LeaveGameRequest());
+    }
 }

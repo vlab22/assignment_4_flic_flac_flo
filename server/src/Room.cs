@@ -42,6 +42,7 @@ namespace server
         protected virtual void removeMember(TcpMessageChannel pMember)
         {
             Log.LogInfo("Client left.", this);
+            
             _members.Remove(pMember);
         }
 
@@ -102,10 +103,21 @@ namespace server
 		 */
         protected void removeAndCloseMember(TcpMessageChannel pMember)
         {
+            var userName = _server.GetPlayerInfo(pMember)?.userName;
+            
+            var chatMsg = new ChatMessage()
+            {
+                message = $"{userName} disconnected."
+            };
+            sendToAll(chatMsg);
+            
+            clientDisconnected(pMember);
+            
             removeMember(pMember);
+            
             _server.RemovePlayerInfo(pMember);
             pMember.Close();
-
+            
             Log.LogInfo("Removed client at " + pMember.GetRemoteEndPoint(), this);
         }
 
@@ -131,6 +143,11 @@ namespace server
 
         protected abstract void handleNetworkMessage(ASerializable pMessage, TcpMessageChannel pSender);
 
+        protected virtual void clientDisconnected(TcpMessageChannel pChannel)
+        {
+            
+        }
+        
         /**
 		 * Sends a message to all members in the room.
 		 */
@@ -142,9 +159,15 @@ namespace server
             }
         }
 
+        protected PlayerInfo GetOtherPlayerInfoById(int id)
+        {
+            return GetPlayersInfos().FirstOrDefault(p => p.id != id);
+        }
+
         public IEnumerable<PlayerInfo> GetPlayersInfos()
         {
-            return _members.Select(m => _server.GetPlayerInfo(m));
+            var infos = _members.Select(m => _server.GetPlayerInfo(m));
+            return infos;
         }
 
         public List<TcpMessageChannel> Members => _members;
