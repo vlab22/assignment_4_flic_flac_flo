@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using shared;
+using UnityEngine.Events;
 
 /**
  * This is where we 'play' a game.
@@ -16,6 +17,8 @@ public class GameState : ApplicationStateWithView<GameView>
     private PlayerInfo[] _players = new PlayerInfo[2];
 
     private PlayerInfo _thisPlayer;
+
+    public UnityEvent notifyReceiveWinnerResponse;
 
     public override void EnterState()
     {
@@ -100,6 +103,8 @@ public class GameState : ApplicationStateWithView<GameView>
         }
 
         view.resultLabel.text = resultMsg;
+        
+        notifyReceiveWinnerResponse?.Invoke();
     }
 
     private void handlePlayersInfoResponse(PlayersInfoResponse playersInfoResponse)

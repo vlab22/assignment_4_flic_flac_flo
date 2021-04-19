@@ -1,5 +1,6 @@
 ﻿using shared;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Threading;
 
@@ -156,26 +157,47 @@ namespace server
             var looserInfo = GetOtherPlayerInfoById(winnerId);
             var loserUserName = looserInfo?.userName; 
             
-            var thread = new Thread(delegate(object pO)
+            CoroutineManager.StartCoroutine(WaitAndSendWinLoseMessage(msg, winnerUser, loserUserName, gameRoomId), this);
+            
+            // var thread = new Thread(delegate(object pO)
+            // {
+            //     Log.LogInfo("Waiting 2 secs", this);
+            //
+            //     Thread.Sleep(2000);
+            //
+            //     Log.LogInfo("Waited 2 secs", this);
+            //
+            //     var message = $"===> {winnerUser} won {loserUserName}{msg} in GameRoom {gameRoomId}";
+            //
+            //     SendPlayersToLobby();
+            //
+            //     var chatMsg = new ChatMessage()
+            //     {
+            //         message = message
+            //     };
+            //     _server.GetLobbyRoom().sendToAll(chatMsg);
+            // });
+            //
+            // thread.Start();
+        }
+
+        private IEnumerator WaitAndSendWinLoseMessage(string pMsg, string pWinnerUser, string pLooserName, int pRoomId)
+        {
+            Log.LogInfo("Waiting 2 secs", this);
+
+            yield return new WaitForMilliSeconds(2000);
+            
+            Log.LogInfo("Waited 2 secs", this);
+            
+            var message = $"===> {pWinnerUser} won {pLooserName}{pMsg} in GameRoom {pRoomId}";
+            
+            SendPlayersToLobby();
+            
+            var chatMsg = new ChatMessage()
             {
-                Log.LogInfo("Waiting 2 secs", this);
-
-                Thread.Sleep(2000);
-
-                Log.LogInfo("Waited 2 secs", this);
-
-                var message = $"===> {winnerUser} won {loserUserName}{msg} in GameRoom {gameRoomId}";
-
-                SendPlayersToLobby();
-
-                var chatMsg = new ChatMessage()
-                {
-                    message = message
-                };
-                _server.GetLobbyRoom().sendToAll(chatMsg);
-            });
-
-            thread.Start();
+                message = message
+            };
+            _server.GetLobbyRoom().sendToAll(chatMsg);
         }
 
         protected override void clientDisconnected(TcpMessageChannel pChannel)
@@ -184,7 +206,7 @@ namespace server
 
             var winnerMember = Members.FirstOrDefault(m => m != pChannel);
             var winnerId = _server.GetPlayerInfo(winnerMember).id;
-            SendWinnerMsgAndPlayerToLobby(winnerId, " by W.O.");
+            SendWinnerMsgAndPlayerToLobby(winnerId, " by Rage Quit");
         }
 
         private void SendPlayersToLobby()

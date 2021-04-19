@@ -41,6 +41,7 @@ namespace server
 
         //Simple timer count
         private Stopwatch _stopwatch;
+        private long _stopWatchEllapsed;
 
         //Heartbeat check fields
 
@@ -98,6 +99,10 @@ namespace server
 
                 HeartBeatClients();
 
+                int delta = (int)(_stopwatch.ElapsedMilliseconds - _stopWatchEllapsed);
+                _stopWatchEllapsed = _stopwatch.ElapsedMilliseconds;
+                CoroutineManager.Tick(delta);
+                
                 Thread.Sleep(100);
             }
         }

@@ -57,6 +57,17 @@ namespace server
 				return;
 			}
 
+			var players = _server.GetPlayerInfo(p => p.userName.ToLower() == userName.ToLower());
+			if (players.Count > 0) 
+			{
+				playerJoinResponse = new PlayerJoinResponse
+				{
+					result = PlayerJoinResponse.RequestResult.USERNAME_NOT_UNIQUE
+				};
+				pSender.SendMessage(playerJoinResponse);
+				return;
+			}
+
 			var playerInfo = _server.GetPlayerInfo(pSender);
 			playerInfo.userName = userName;
 
